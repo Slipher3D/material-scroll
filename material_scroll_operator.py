@@ -13,11 +13,11 @@ class Ms_OT_material_scroll(bpy.types.Operator):
         C, A, S, D, M = self.get_object_material_data()
 
         object_index = 0
-        object_max = len(S)
+        object_max = len(S) - 1
 
         for index, s in enumerate(S):
             if A.name == s.name:
-                object_index = s
+                object_index = index
 
         if A.material_slots is not None:
 
@@ -27,16 +27,14 @@ class Ms_OT_material_scroll(bpy.types.Operator):
                     ms_max = len(A.material_slots) - 1
                 if len(M) > 1:
                     mat_max = len(M) - 1
-                m_name = A.material_slots[ms_index].name
-                for index, m in enumerate(M):
-                    if m_name == m.name:
-                        mat_index = index
+                mat_name = A.material_slots[ms_index].name
+                mat_index = self.get_mat_index(M, mat_name)
 
-                self.set_header_text(context, A, m_name, mat_index, ms_index)
+                self.set_header_text(context, A, mat_name, mat_index, ms_index)
             except IndexError:
                 print("Indexes out of bounds")
             
-            if event.type == 'RIGHT_SHIFT':
+            if event.type == 'X':
 
                 if object_index < object_max:
                     object_index += 1
@@ -47,45 +45,92 @@ class Ms_OT_material_scroll(bpy.types.Operator):
 
                 C, A, S, D, M = self.get_object_material_data()
 
+                try:
+                    ms_index = A.active_material_index
+                    if len(A.material_slots) > 1:
+                        ms_max = len(A.material_slots) - 1
+                    if len(M) > 1:
+                        mat_max = len(M) - 1
+                    mat_name = A.material_slots[ms_index].name
+                    mat_index = self.get_mat_index(M, mat_name)
+                except IndexError:
+                    print("Probably don't have a material or material slot on this object")
+                
+                if len(A.material_slots) == 0:
+                    ms_index = 0
+                    mat_name = "NA"
+                    mat_index = 0
+
+                self.set_header_text(context, A, mat_name, mat_index, ms_index)
+            
+            if event.type == 'Z':
+
+                if object_index > 0:
+                    object_index -= 1
+                else:
+                    object_index = object_max
+
+                C.view_layer.objects.active = S[object_index]
+
+                C, A, S, D, M = self.get_object_material_data()
+
+                try:
+                    ms_index = A.active_material_index
+                    if len(A.material_slots) > 1:
+                        ms_max = len(A.material_slots) - 1
+                    if len(M) > 1:
+                        mat_max = len(M) - 1
+                    mat_name = A.material_slots[ms_index].name
+                    mat_index = self.get_mat_index(M, mat_name)
+                except IndexError:
+                    print("Probably don't have a material or material slot on this object")
+
+                if len(A.material_slots) == 0:
+                    ms_index = 0
+                    mat_name = "NA"
+                    mat_index = 0
+
+                self.set_header_text(context, A, mat_name, mat_index, ms_index)
+
             if event.type == 'WHEELUPMOUSE':
                 if event.ctrl:
                     if ms_index > 0:
                         ms_index -= 1
                         A.active_material_index = ms_index
-                        self.set_header_text(context, A, m_name, mat_index, ms_index)
+                        self.set_header_text(context, A, mat_name, mat_index, ms_index)
                     else:
                         ms_index = ms_max
                         A.active_material_index = ms_index
-                        self.set_header_text(context, A, m_name, mat_index, ms_index)
+                        self.set_header_text(context, A, mat_name, mat_index, ms_index)
                 else:
                     if mat_index > 0:
                         mat_index -= 1
                         A.material_slots[ms_index].material = D.materials[mat_index]
-                        self.set_header_text(context, A, m_name, mat_index, ms_index)
+                        self.set_header_text(context, A, mat_name, mat_index, ms_index)
                     else:
                         mat_index = mat_max
                         A.material_slots[ms_index].material = D.materials[mat_index]
-                        self.set_header_text(context, A, m_name, mat_index, ms_index)
+                        self.set_header_text(context, A, mat_name, mat_index, ms_index)
 
             if event.type == 'WHEELDOWNMOUSE':
                 if event.ctrl:
                     if ms_index < ms_max:
                         ms_index += 1
                         A.active_material_index = ms_index
-                        self.set_header_text(context, A, m_name, mat_index, ms_index)
+                        self.set_header_text(context, A, mat_name, mat_index, ms_index)
                     else:
                         ms_index = 0
                         A.active_material_index = ms_index
-                        self.set_header_text(context, A, m_name, mat_index, ms_index)
+                        self.set_header_text(context, A, mat_name, mat_index, ms_index)
                 else:
                     if mat_index < mat_max:
                         mat_index += 1
                         A.material_slots[ms_index].material = D.materials[mat_index]
-                        self.set_header_text(context, A, m_name, mat_index, ms_index)
+                        self.set_header_text(context, A, mat_name, mat_index, ms_index)
                     else:
                         mat_index = 0
                         A.material_slots[ms_index].material = D.materials[mat_index]
-                        self.set_header_text(context, A, m_name, mat_index, ms_index)
+                        self.set_header_text(context, A, mat_name, mat_index, ms_index)
 
             elif event.type == 'LEFTMOUSE':
                 context.area.header_text_set(None)
@@ -99,6 +144,12 @@ class Ms_OT_material_scroll(bpy.types.Operator):
             return {'CANCELLED'}
 
         return {'RUNNING_MODAL'}
+
+    def get_mat_index(self, M, m_name):
+        for index, m in enumerate(M):
+            if m_name == m.name:
+                mat_index = index
+        return mat_index
 
     def get_object_material_data(self):
         C = bpy.context
