@@ -5,6 +5,11 @@ class Ms_OT_material_scroll(bpy.types.Operator):
     bl_idname = "object.ms_ot_material_scroll"
     bl_label = "ms_OT_material_scroll"
 
+    @classmethod
+    def poll(cls, context):
+        A = context.active_object
+        return A is not None and A.type == 'MESH'
+
     def menu_func(self, context):
         self.layout.operator(Ms_OT_material_scroll.bl_idname)
 
@@ -157,6 +162,11 @@ class Ms_OT_material_scroll(bpy.types.Operator):
         S = C.selected_objects
         D = bpy.data
         M = D.materials
+
+        for s in S:
+            if s.type != 'MESH':
+                S.remove(s)
+
         return C,A,S,D,M
 
     def set_header_text(self, context, A, m_name, mat_index, ms_index):
