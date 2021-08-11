@@ -39,63 +39,64 @@ class Ms_OT_material_scroll(bpy.types.Operator):
             except IndexError:
                 print("Indexes out of bounds")
             
-            if event.type == 'X':
+            if event.type == 'X' and event.value == 'RELEASE':
+                if len(S) > 0:
+                    if object_index < object_max:
+                        object_index += 1
+                    else:
+                        object_index = 0
 
-                if object_index < object_max:
-                    object_index += 1
-                else:
-                    object_index = 0
+                    C.view_layer.objects.active = S[object_index]
 
-                C.view_layer.objects.active = S[object_index]
+                    C, A, S, D, M = self.get_object_material_data()
 
-                C, A, S, D, M = self.get_object_material_data()
+                    try:
+                        ms_index = A.active_material_index
+                        if len(A.material_slots) > 1:
+                            ms_max = len(A.material_slots) - 1
+                        if len(M) > 1:
+                            mat_max = len(M) - 1
+                        mat_name = A.material_slots[ms_index].name
+                        mat_index = self.get_mat_index(M, mat_name)
+                    except IndexError:
+                        print("Probably don't have a material or material slot on this object")
+                    
+                    if len(A.material_slots) == 0:
+                        ms_index = 0
+                        mat_name = "NA"
+                        mat_index = 0
 
-                try:
-                    ms_index = A.active_material_index
-                    if len(A.material_slots) > 1:
-                        ms_max = len(A.material_slots) - 1
-                    if len(M) > 1:
-                        mat_max = len(M) - 1
-                    mat_name = A.material_slots[ms_index].name
-                    mat_index = self.get_mat_index(M, mat_name)
-                except IndexError:
-                    print("Probably don't have a material or material slot on this object")
-                
-                if len(A.material_slots) == 0:
-                    ms_index = 0
-                    mat_name = "NA"
-                    mat_index = 0
-
-                self.set_header_text(context, A, mat_name, mat_index, ms_index)
+                    self.set_header_text(context, A, mat_name, mat_index, ms_index)
             
-            if event.type == 'Z':
+            if event.type == 'Z' and event.value == 'RELEASE':
 
-                if object_index > 0:
-                    object_index -= 1
-                else:
-                    object_index = object_max
+                if len(S) > 0:
+                    if object_index > 0:
+                        object_index -= 1
+                    else:
+                        object_index = object_max
 
-                C.view_layer.objects.active = S[object_index]
+                    C.view_layer.objects.active = S[object_index]
 
-                C, A, S, D, M = self.get_object_material_data()
+                    C, A, S, D, M = self.get_object_material_data()
 
-                try:
-                    ms_index = A.active_material_index
-                    if len(A.material_slots) > 1:
-                        ms_max = len(A.material_slots) - 1
-                    if len(M) > 1:
-                        mat_max = len(M) - 1
-                    mat_name = A.material_slots[ms_index].name
-                    mat_index = self.get_mat_index(M, mat_name)
-                except IndexError:
-                    print("Probably don't have a material or material slot on this object")
+                    try:
+                        ms_index = A.active_material_index
+                        if len(A.material_slots) > 1:
+                            ms_max = len(A.material_slots) - 1
+                        if len(M) > 1:
+                            mat_max = len(M) - 1
+                        mat_name = A.material_slots[ms_index].name
+                        mat_index = self.get_mat_index(M, mat_name)
+                    except IndexError:
+                        print("Probably don't have a material or material slot on this object")
 
-                if len(A.material_slots) == 0:
-                    ms_index = 0
-                    mat_name = "NA"
-                    mat_index = 0
+                    if len(A.material_slots) == 0:
+                        ms_index = 0
+                        mat_name = "NA"
+                        mat_index = 0
 
-                self.set_header_text(context, A, mat_name, mat_index, ms_index)
+                    self.set_header_text(context, A, mat_name, mat_index, ms_index)
 
             if event.type == 'WHEELUPMOUSE':
                 if event.ctrl:
