@@ -85,7 +85,6 @@ class Ms_OT_material_scroll(bpy.types.Operator):
 
                     if len(A.material_slots) < 1:
                         D.objects[object_index].data.materials.append(D.materials['MS Material'])
-                        #get this to work damnit
 
                     try:
                         ms_index = self.get_ms_index(A)
