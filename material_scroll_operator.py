@@ -4,6 +4,7 @@ from bpy.types import Operator
 class Ms_OT_material_scroll(bpy.types.Operator):
     bl_idname = "object.ms_ot_material_scroll"
     bl_label = "ms_OT_material_scroll"
+    bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
     def poll(cls, context):
@@ -50,7 +51,7 @@ class Ms_OT_material_scroll(bpy.types.Operator):
 
             self.set_header_text(context, A, mat_name, modes, current_mode, ms_index)
 
-        elif event.type == 'WHEELUPMOUSE':
+        elif event.type in {'WHEELUPMOUSE', 'LEFT_ARROW'} and event.value == 'RELEASE':
             print(current_mode)
             if current_mode == modes.index('MATERIAL'):
                 #change the materials
@@ -102,7 +103,7 @@ class Ms_OT_material_scroll(bpy.types.Operator):
 
                     self.set_header_text(context, A, mat_name, modes, current_mode, ms_index)
 
-        elif event.type == 'WHEELDOWNMOUSE':
+        elif event.type in {'WHEELDOWNMOUSE', 'RIGHT_ARROW'} and event.value == 'RELEASE':
             if current_mode == modes.index('MATERIAL'):
                 if mat_index < mat_max:
                     mat_index += 1
