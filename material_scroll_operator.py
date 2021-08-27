@@ -196,12 +196,6 @@ class Ms_OT_material_scroll(bpy.types.Operator):
                 object_index = index
         return object_index
 
-    def get_mat_index(self, M, m_name):
-        for index, m in enumerate(M):
-            if m_name == m.name:
-                mat_index = index
-        return mat_index
-
     def get_object_material_data(self):
         C = bpy.context
         A = C.active_object
