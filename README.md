@@ -10,7 +10,7 @@ How to use:
 
 3. Hit alt+c or your own hotkey.
 
-4. Scroll up and down to change the material of the actively selected mesh. Hit tab to change mode between Material, Material Slot, and Selection. Scrolling in Material Slot mode changes the active objects material slot, if it has any others. Scrolling in Selection changes the active object from the current selection.
+4. Scroll up and down to change the material of the actively selected mesh (or use the left and right arrow keys). Hit tab to change mode between Material, Material Slot, and Selection. Scrolling in Material Slot mode changes the active objects material slot, if it has any others. Scrolling in Selection changes the active object from the current selection.
 
 5. Left or right click to end operator.
 
